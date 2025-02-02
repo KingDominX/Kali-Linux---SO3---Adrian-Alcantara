@@ -1,0 +1,68 @@
+### **1. Comandos de Red**
+| **Comando**              | **Uso**                                                                 | **Ejemplo**                          |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `ip a`                   | Ver todas las interfaces de red y sus direcciones IP.                  | `ip a`                                |
+| `ping`                   | Probar conectividad con un host.                                       | `ping google.com -c 4`                |
+| `nmcli`                  | Gestionar conexiones de red (NetworkManager).                          | `nmcli con show`                      |
+| `dhclient`               | Renovar IP via DHCP.                                                   | `sudo dhclient -v eth0`               |
+| `nslookup`               | Verificar resolución DNS.                                              | `nslookup google.com`                 |
+| `systemctl restart <servicio>` | Reiniciar servicios (ej: red).                                      | `sudo systemctl restart networking`   |
+
+---
+
+### **2. Gestión de Usuarios y Grupos**
+| **Comando**              | **Uso**                                                                 | **Ejemplo**                          |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `adduser`                | Crear un usuario interactivamente.                                     | `sudo adduser juan`                   |
+| `useradd`                | Crear usuario sin prompts (opciones avanzadas).                        | `sudo useradd -m -s /bin/bash ana`    |
+| `usermod`                | Modificar grupos o propiedades de un usuario.                          | `sudo usermod -aG sudo juan`          |
+| `groupadd`               | Crear un nuevo grupo.                                                  | `sudo groupadd developers`            |
+| `userdel`                | Eliminar un usuario.                                                   | `sudo userdel -r juan`                |
+| `groupdel`               | Eliminar un grupo.                                                     | `sudo groupdel developers`            |
+| `id`                     | Ver grupos y permisos de un usuario.                                   | `id juan`                             |
+| `getent`                 | Ver información de usuarios/grupos en la base de datos del sistema.    | `getent group sudo`                   |
+
+---
+
+### **3. Archivos, Permisos y Directorios**
+| **Comando**              | **Uso**                                                                 | **Ejemplo**                          |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `chmod`                  | Cambiar permisos de archivos/directorios (modo numérico o simbólico).  | `chmod 700 archivo.txt`               |
+| `chown`                  | Cambiar propietario/grupo de un archivo.                               | `sudo chown juan:developers archivo`  |
+| `ls -l`                  | Listar archivos con detalles de permisos y propietarios.               | `ls -l /home`                         |
+| `mkdir`                  | Crear directorios.                                                     | `mkdir proyecto`                      |
+| `touch`                  | Crear un archivo vacío.                                                | `touch ejemplo.txt`                   |
+| `cp`                     | Copiar archivos o directorios.                                         | `cp -r carpeta/ nueva_carpeta/`       |
+| `rm`                     | Eliminar archivos o directorios (**¡Cuidado!**).                       | `rm -rf carpeta/`                     |
+| `nano` / `vi`            | Editores de texto en terminal.                                         | `nano documento.txt`                  |
+
+---
+
+### **4. Gestión de Paquetes (APT)**
+| **Comando**              | **Uso**                                                                 | **Ejemplo**                          |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `apt update`             | Actualizar la lista de paquetes disponibles.                           | `sudo apt update`                     |
+| `apt upgrade`            | Actualizar todos los paquetes instalados.                              | `sudo apt upgrade -y`                 |
+| `apt install`            | Instalar un paquete.                                                   | `sudo apt install nmap`               |
+| `apt remove`             | Desinstalar un paquete.                                                | `sudo apt remove nano`                |
+
+---
+
+### **5. Comandos de Supervisión y Ayuda**
+| **Comando**              | **Uso**                                                                 | **Ejemplo**                          |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `man`                    | Ver el manual de un comando.                                           | `man chmod`                           |
+| `journalctl`             | Ver registros del sistema (logs).                                      | `journalctl -u NetworkManager`        |
+| `df -h`                  | Ver espacio libre en discos.                                           | `df -h`                               |
+| `btop` / `htop`          | Monitorear procesos y uso de recursos.                                 | `htop`                                |
+
+---
+
+### **6. Comandos Peligrosos (¡Usar con Precaución!)**
+| **Comando**              | **Riesgo**                                                              | **Alternativa Segura**               |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------|
+| `rm -rf /`               | **Borra todo el sistema**.                                             | `rm -rf ./carpeta/` (rutas relativas) |
+| `chmod -R 777 /`         | Da permisos totales a todos, exponiendo el sistema.                    | `chmod 700 ~/documentos`              |
+| `dd`                     | Sobrescribe discos si se usa incorrectamente.                          | Usar solo con conocimiento avanzado. |
+
+---
