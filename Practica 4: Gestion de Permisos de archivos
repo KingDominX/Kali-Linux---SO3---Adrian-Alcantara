@@ -10,10 +10,26 @@ Modificar Permisos
 chmod 700 materia/estudiante.txt  # Solo usuario: control total (rwx)
 chmod 070 materia/estudiante.txt  # Solo grupo: control total (rwx)
 
+Explicacion
+0 (usuario) 0 (grupo) 0 (otros)
+r (lectura), w (escritura), x (ejecución).
+
+Usuario: Dueño del archivo.
+Grupo: Grupo asignado al archivo.
+Otros: Cualquier usuario del sistema.
+
+Modo Numérico:
+7 = 4 (r) + 2 (w) + 1 (x) = rwx.
+0 = Sin permisos
+
 Copiar y Eliminar
-mkdir materia2                    # Crear nueva carpeta
-cp materia/estudiante.txt materia2/  # Copiar archivo
-rm -rf materia                    # Eliminar carpeta y contenido
+mkdir materia2    # Crear la nueva carpeta
+cp materia/estudiante.txt materia2/  # Copiar el archivo (conservando el nombre)
+ls materia2/  # Debe mostrar "estudiante.txt"
+rm -rf materia2                    # Eliminar carpeta y contenido
+
+-r: Elimina recursivamente (carpetas y subcarpetas)
+-f: Fuerza la eliminación sin preguntar
 
 Comandos de Verificación Generales
 ip a                          # Ver interfaces de red
