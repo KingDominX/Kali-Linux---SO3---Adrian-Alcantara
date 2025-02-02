@@ -1,0 +1,19 @@
+Práctica 3: Gestión de Usuarios y Grupos
+
+Crear Usuario Administrador
+sudo adduser fulanito                  # Crear usuario interactivo
+sudo usermod -aG sudo fulanito         # Agregar al grupo "sudoers"
+
+id juan                           # Ver grupos del usuario
+getent group guest                # Ver miembros del grupo
+
+Crear Grupo "guest" y Usuario Asociado
+sudo groupadd guest                # Crear grupo
+sudo adduser usuario_invitado      # Crear usuario
+sudo usermod -aG guest usuario_invitado  # Asignar al grupo
+
+Eliminar Usuario y Grupo
+sudo userdel -r usuario_invitado   # Eliminar usuario y su directorio
+sudo groupdel guest                # Eliminar grupo
+
+
