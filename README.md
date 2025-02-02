@@ -1,9 +1,11 @@
-# Proyecto Kali Linux - Sistemas Operativos 3 (ITLA)
+# Kali Linux - Sistemas Operativos 3 (ITLA)
 
 ## Estudiante
 
 * **Nombre:** Domingo Ramírez
 * **Matrícula:** 2024-1133
+* **Carrera:** Redes de la informacion
+* **Docente:** Adrian Alcantara
 
 ## Descripción del Proyecto
 
