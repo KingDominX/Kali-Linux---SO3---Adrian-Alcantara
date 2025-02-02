@@ -12,21 +12,24 @@ Con dhclient:
 sudo dhclient -r eth0    # Liberar IP actual
 sudo dhclient -v eth0    # Obtener nueva IP
 
+Usando nmtui:
+sudo nmtui
+
 Archivo /etc/network/interfaces:
 sudo nano /etc/network/interfaces  # Agregar: iface eth0 inet dhcp
 sudo systemctl restart networking
-Configurar IP Estática
 
+Configurar IP Estática
 Con nmcli:
 sudo nmcli con mod "Nombre-Conexión" \
   ipv4.addresses 192.168.1.100/24 \
   ipv4.gateway 192.168.1.1 \
   ipv4.method manual
-
 sudo nmcli con reload
 
 Archivo /etc/network/interfaces:
-sudo nano /etc/network/interfaces  # Agregar:
+sudo nano /etc/network/interfaces 
+# Agregar al archivo:
 # auto eth0
 # iface eth0 inet static
 #   address 192.168.1.100
@@ -41,7 +44,8 @@ sudo ip route add default via 192.168.1.1   # Configurar gateway
 
 Configurar DNS de Google
 Con nmcli:
-sudo nmcli con mod "Nombre-Conexión" ipv4.dns "8.8.8.8 8.8.4.4"
+sudo nmcli con mod "Nombre-Conexión" \
+ipv4.dns "8.8.8.8 8.8.4.4"
 sudo nmcli con down "Nombre-Conexión" && sudo nmcli con up "Nombre-Conexión"
 
 Archivo /etc/resolv.conf (Temporal):
@@ -49,3 +53,6 @@ sudo nano /etc/resolv.conf  # Agregar:
 # nameserver 8.8.8.8
 # nameserver 8.8.4.4
 
+Kali Linux no usa Netplan por defecto
+Verificación Final
+ping google.com
