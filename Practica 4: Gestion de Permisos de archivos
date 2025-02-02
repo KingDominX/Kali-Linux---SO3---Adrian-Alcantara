@@ -1,0 +1,29 @@
+Práctica 4: Gestión de Permisos de Archivos
+
+Crear Carpeta y Archivo
+mkdir materia                     # Crear carpeta
+touch materia/estudiante.txt      # Crear archivo
+vi materia/estudiante.txt         # Editar y agregar nombre/matrícula
+nano materia/estudiante.txt
+
+Modificar Permisos
+chmod 700 materia/estudiante.txt  # Solo usuario: control total (rwx)
+chmod 070 materia/estudiante.txt  # Solo grupo: control total (rwx)
+
+Copiar y Eliminar
+mkdir materia2                    # Crear nueva carpeta
+cp materia/estudiante.txt materia2/  # Copiar archivo
+rm -rf materia                    # Eliminar carpeta y contenido
+
+Comandos de Verificación Generales
+ip a                          # Ver interfaces de red
+route -n                      # Ver tabla de rutas
+nslookup google.com           # Probar resolución DNS
+
+Usuarios y Grupos
+cat /etc/passwd               # Lista de usuarios
+cat /etc/group                # Lista de grupos
+groups usuario                # Grupos de un usuario
+
+ls -l archivo.txt             # Ver permisos y propietario
+stat archivo.txt              # Detalles avanzados
