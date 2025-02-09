@@ -1,0 +1,9 @@
+| Comando                                                                  | Explicación                                                                                                             |
+|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `sudo crontab -e`                                                          | Abre el editor para el archivo crontab (para el usuario root, si se usa sudo).                                                 |
+| `0 23 * * * sudo apt update && sudo apt upgrade -y`                         | Línea a añadir en `crontab`: Actualiza el sistema diariamente a las 11 PM.                                                  |
+| `0 3 * * 0 /sbin/shutdown -r now`                                          | Línea a añadir en `crontab`: Reinicia el sistema los domingos a las 3 AM.                                                   |
+| `echo "/usr/bin/rm -rf /tmp/* > /dev/null 2>&1" | at now + 1 minute` | Programa la eliminación del contenido de `/tmp` en 1 minuto usando `at`. La redirección evita mostrar la salida del comando. |
+| `atq`                                                                     | Muestra la cola de trabajos programados con `at`.                                                                          |
+| `crontab -l`                                                              | Muestra el contenido del crontab.
+| `Sudo journalctl -u atd                                                   | Para observar posibles errores
