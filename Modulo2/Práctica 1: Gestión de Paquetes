@@ -1,0 +1,12 @@
+| Comando                               | Explicación                                                                                           |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------|
+| `sudo apt update && sudo apt upgrade -y` | Actualiza la lista de paquetes y actualiza los paquetes instalados.                                     |
+| `grep -rh ^deb /etc/apt/sources.list /etc/apt/sources.list.d/` | Lista los repositorios activos.                                                                                 |
+| `ls /etc/apt/sources.list.d/`           | Lista los archivos de repositorios externos.                                                              |
+| `apt search bashtop`                   | Busca el paquete `bashtop` en los repositorios.                                                         |
+| `sudo add-apt-repository ppa:bashtop-monitor/bashtop` | Agrega el repositorio PPA para `bashtop` (si es necesario).                                             |
+| `sudo apt update`                       | Actualiza la lista de paquetes después de agregar un PPA.                                                |
+| `sudo apt install bashtop`               | Instala el paquete `bashtop`.                                                                           |
+| `bashtop`                               | Inicia `bashtop`.                                                                                       |
+| `sudo apt purge bashtop`               | Desinstala `bashtop` y elimina sus archivos de configuración.                                         |
+| `sudo apt autoremove`                   | Elimina las dependencias no utilizadas después de desinstalar paquetes.                               |
