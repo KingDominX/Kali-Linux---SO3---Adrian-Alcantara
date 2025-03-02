@@ -1,0 +1,21 @@
+# 1. Instalar Apache
+sudo apt update && sudo apt install apache2 -y
+
+# 2. Crear directorios y contenido
+sudo mkdir /var/www/holamundo /var/www/datos
+echo "<h1>Hola Mundo</h1>" | sudo tee /var/www/holamundo/index.html
+echo "<h1>Datos personales</h1>" | sudo tee /var/www/Matricula/index.html
+
+# 3. Configurar sitios virtuales
+sudo nano /etc/apache2/sites-available/holamundo.conf
+sudo nano /etc/apache2/sites-available/Matricula.conf
+
+# 4. Habilitar puerto 8080
+sudo nano /etc/apache2/ports.conf  # Añadir: Listen 8080
+
+# 5. Activar sitios y reiniciar
+sudo a2ensite holamundo.conf datos.conf
+sudo systemctl restart apache2
+
+# 6. Verificar
+curl http://localhost && curl http://localhost:8080
