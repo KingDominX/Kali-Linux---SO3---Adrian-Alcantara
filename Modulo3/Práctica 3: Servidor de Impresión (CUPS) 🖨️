@@ -1,0 +1,32 @@
+# 1. Instalar CUPS y PDF Virtual
+sudo apt install cups cups-pdf -y
+sudo usermod -aG lpadmin $USER
+apt install ufw -y 
+
+systemctl start cups
+ufw enable
+ufw allow 631/tcp
+
+# 2. Configurar acceso remoto
+Para habilitar la administración remota, 
+sudo cupsctl --remote-any
+sudo cupsctl --remote-admin
+sudo cupsctl --share-printers
+
+
+# 3. Metodo secundario que no me funciono
+sudo nano /etc/cups/cupsd.conf  # Añadir:
+Listen 10.0.0.232:631
+<Location />
+  Allow @local
+  Allow 10.0.0.0/24
+</Location>
+
+# 4. Configurar impresora por CUPS
+
+# 5. Reiniciar servicios
+sudo systemctl restart cups
+
+# 6. Probar impresión
+echo "Prueba" | lp -d PDF-Virtual
+ls /var/cups-pdf  # Verificar PDF generado
