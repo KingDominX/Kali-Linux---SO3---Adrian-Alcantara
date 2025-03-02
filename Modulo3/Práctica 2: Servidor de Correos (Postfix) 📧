@@ -1,0 +1,20 @@
+# 1. Instalar Postfix y herramientas
+sudo apt install postfix mailutils -y  # Seleccionar "Internet Site"
+
+# 2. Configurar Postfix para Gmail
+sudo nano /etc/postfix/main.cf  # Añadir:
+relayhost = [smtp.gmail.com]:587
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_use_tls = yes
+
+# 3. Crear credenciales
+sudo nano /etc/postfix/sasl_passwd  # Contenido: [smtp.gmail.com]:587 tu_correo:contraseña
+sudo postmap /etc/postfix/sasl_passwd
+sudo chmod 600 /etc/postfix/sasl_passwd*
+
+# 4. Reiniciar Postfix
+sudo systemctl restart postfix
+
+# 5. Probar envío
+echo "Cuerpo del mensaje" | mail -s "Asunto" os3conadrian@gmail.com
