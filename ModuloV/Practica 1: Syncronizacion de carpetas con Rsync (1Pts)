@@ -1,0 +1,30 @@
+## **Práctica 1: Sincronización con Rsync**
+
+### **Servidor Primario (10.0.0.232)**
+```bash
+# Crear carpeta y archivos
+mkdir ~/Sync
+cd ~/Sync
+touch gustavo{1..100}.txt
+
+# Generar clave SSH y copiar al secundario
+ssh-keygen -t rsa
+ssh-copy-id usuario@10.0.0.233
+
+# Sincronizar manualmente
+rsync -avz --delete -e ssh ~/Sync/ domingo@10.0.0.233:~/Sync/
+
+# Crear script de sincronización
+sudo nano /usr/local/bin/sync_gustavo.sh
+
+Contenido del script (sync_gustavo.sh):
+#!/bin/bash
+rsync -avz --delete -e ssh /home/usuario/sync_folder/ usuario@10.0.0.233:/home/usuario/sync_folder/
+echo "Sincronizado: $(date)" >> /var/log/sync.log
+
+# Dar permisos y programar Cron
+sudo chmod +x /usr/local/bin/sync_script.sh
+crontab -e
+
+Agregar al Crontab
+*/1 * * * * /usr/local/bin/sync_script.sh
