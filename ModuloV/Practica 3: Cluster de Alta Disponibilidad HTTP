@@ -1,0 +1,56 @@
+Práctica 3: Cluster HTTP con Keepalived
+En Ambos Nodos (10.0.0.232 y 10.0.0.233)
+
+# Instalar Apache y Keepalived
+sudo apt update && sudo apt install apache2 keepalived -y
+
+# Crear páginas web únicas
+# En domingo1:
+echo "<h1>Servidor 1</h1>" | sudo tee /var/www/html/index.html
+# En domingo2:
+echo "<h1>Servidor 2</h1>" | sudo tee /var/www/html/index.html
+
+# Configurar Keepalived
+sudo nano /etc/keepalived/keepalived.conf
+
+Contenido para MASTER (10.0.0.232):
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1234
+    }
+    virtual_ipaddress {
+        10.0.0.241/24
+    }
+}
+
+Contenido para BACKUP (10.0.0.233):
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface eth0
+    virtual_router_id 51
+    priority 50
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1234
+    }
+    virtual_ipaddress {
+        10.0.0.241/24
+    }
+}
+
+
+# Reiniciar servicios
+sudo systemctl restart apache2 keepalived
+sudo systemctl enable keepalived
+
+# Verificar IP flotante
+ip addr show eth0 | grep "10.0.0.241"
