@@ -1,0 +1,36 @@
+En Ambos Nodos (10.0.0.232 y 10.0.0.233)
+# Instalar Heartbeat
+sudo apt update && sudo apt install heartbeat -y
+
+# Configurar archivos
+sudo nano /etc/ha.d/ha.cf
+
+Contenido de ha.cf:
+
+logfile /var/log/ha-log
+keepalive 2
+deadtime 10
+udpport 694
+ucast eth0 10.0.0.233   # En domingo1
+ucast eth0 10.0.0.232   # En domingo2
+auto_failback off
+node domingo1 domingo2
+
+sudo nano /etc/ha.d/haresources
+
+Contenido de haresources:
+domingo1 10.0.0.240/24/eth0
+
+sudo nano /etc/ha.d/authkeys
+Contenido de authkeys:
+auth 1
+1 sha1 Deperrito
+
+# Permisos y reinicio
+sudo chmod 600 /etc/ha.d/authkeys
+sudo systemctl restart heartbeat
+sudo systemctl enable heartbeat
+
+# Verificar IP flotante
+ip addr show eth0 | grep "10.0.0.240"
+
