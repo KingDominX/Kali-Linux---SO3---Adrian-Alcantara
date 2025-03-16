@@ -1,0 +1,53 @@
+1. Instalar Snort en Kali Linux
+sudo apt update && sudo apt install snort -y
+
+2. Crear Reglas de Detección
+sudo nano /etc/snort/rules/local.rules
+
+# Detectar tráfico ICMP (Ping)
+alert icmp any any -> any any (msg:"ICMP Detectado"; itype:8; sid:1000001;)
+
+# Detectar tráfico al puerto 21 (FTP)
+alert tcp any any -> any 21 (msg:"FTP Detectado"; flags:S; sid:1000002;)
+
+# Detectar tráfico al puerto 22 (SSH)
+alert tcp any any -> any 22 (msg:"SSH Detectado"; flags:S; sid:1000003;)
+
+# Detectar tráfico al puerto 80 (HTTP)
+alert tcp any any -> any 80 (msg:"HTTP Detectado"; content:"GET"; sid:1000004;)
+
+2.2 Archivo de Configuración Principal (/etc/snort/snort.lua)
+Contenido (solo lo esencial):
+HOME_NET = '10.0.0.0/24'
+EXTERNAL_NET = 'any'
+ips = {
+    include = '/etc/snort/rules/local.rules',  -- Carga reglas personalizadas
+    enable_builtin_rules = true                -- Habilita reglas predefinidas
+}
+
+alert_fast = {
+    file = stdout,  -- Alertas en consola
+    packet = false   -- No incluir el paquete completo en el log
+}
+
+3. Verifica que no haya errores:
+sudo snort -c /etc/snort/snort.lua --warn-all
+
+4. Ejecutar Snort en Modo de Detección
+sudo snort -c /etc/snort/snort.lua -i eth0 -A alert_fast
+
+5.Generar Tráfico de Prueba
+Desde otra máquina en la red, ejecuta los siguientes comandos:
+
+a) Prueba ICMP (Ping):
+ping <IP-de-tu-Kali>  # Ej: ping 10.0.0.232
+
+b) Prueba FTP (Puerto 21):
+nmap -p 21 <IP-de-tu-Kali>  # Escaneo básico
+
+c) Prueba SSH (Puerto 22):
+ssh usuario@<IP-de-tu-Kali>  # Intento de conexión (usa credenciales incorrectas)
+
+d) Prueba HTTP (Puerto 80):
+curl http://<IP-de-tu-Kali>  # Solicitud HTTP GET
+
