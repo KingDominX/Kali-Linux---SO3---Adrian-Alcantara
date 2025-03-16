@@ -37,6 +37,12 @@ sudo iptables -D INPUT -p tcp --dport 80 -j DROP  # Elimina regla HTTP
 sudo iptables -D INPUT -p tcp --dport 21 -j DROP  # Elimina regla FTP
 sudo iptables -D INPUT -p tcp --dport 22 -j DROP  # Elimina regla SSH
 
+sudo iptables -F  # Elimina reglas de filtrado (flush)
+sudo iptables -X  # Elimina cadenas personalizadas
+sudo iptables -t nat -F  # Limpia reglas de NAT
+sudo iptables -t mangle -F  # Limpia reglas de mangle
+sudo ip6tables -F  # Para IPv6
+
 # O borrar todas las reglas (alternativa rápida):
 sudo iptables -F  # Elimina todas las reglas
 
