@@ -1,0 +1,19 @@
+Práctica 1 - Cifrado con GPG2
+Instalar GPG2:
+
+sudo apt update && sudo apt install gnupg2 -y
+Crear directorio y archivo:
+
+mkdir Practica1 && cd Practica1
+echo "Contenido secreto" > texto.txt
+
+Cifrar el archivo:
+gpg2 -c texto.txt  # Ingresa una contraseña cuando se solicite.
+Se generará texto.txt.gpg.
+
+Intentar acceder al archivo cifrado:
+cat texto.txt.gpg  # Mostrará caracteres no legibles.
+
+Descifrar y mostrar contenido:
+gpg2 -d texto.txt.gpg > texto_decifrado.txt
+cat texto_decifrado.txt
