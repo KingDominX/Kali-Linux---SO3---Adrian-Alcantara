@@ -1,0 +1,23 @@
+# 1. Instalar dependencias
+sudo apt update && sudo apt install libpam-google-authenticator -y
+
+# 2. Configurar Google Authenticator (ejecutar como usuario, NO root)
+google-authenticator  # Escanea el QR y guarda los códigos de emergencia
+
+# 3. Configurar SSH para usar 2FA
+sudo tee -a /etc/ssh/sshd_config << EOF
+ChallengeResponseAuthentication yes
+UsePAM yes
+PasswordAuthentication yes
+AuthenticationMethods publickey,password publickey,keyboard-interactive
+
+# 4. Configurar PAM
+sudo tee -a /etc/pam.d/sshd << EOF
+auth required pam_google_authenticator.so
+
+# 5. Reiniciar SSH
+sudo systemctl restart sshd
+sudo systemctl restart ssh
+
+# 6. Probar acceso desde otra máquina (Windows/Linux)
+ssh usuario@IP_VM  # Se pedirá contraseña + código 2FA
