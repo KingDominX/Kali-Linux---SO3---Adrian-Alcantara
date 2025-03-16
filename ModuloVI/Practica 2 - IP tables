@@ -1,0 +1,52 @@
+1. Habilitar y verificar los servicios (HTTP, FTP, SSH)
+Instalar e iniciar los servicios (si no están instalados):
+
+sudo apt update
+sudo apt install apache2 vsftpd openssh-server -y  # Instala servicios
+sudo systemctl start apache2 vsftpd ssh            # Inicia servicios
+sudo systemctl enable apache2 vsftpd ssh           # Habilita inicio automático
+
+sudo ss -tuln | grep -E ':80|:21|:22'  # Usando ss (alternativa a netstat)
+
+2. Bloquear puertos con iptables
+Agregar reglas para bloquear tráfico entrante:
+
+sudo iptables -A INPUT -p tcp --dport 80 -j DROP  # HTTP (80)
+sudo iptables -A INPUT -p tcp --dport 21 -j DROP  # FTP (21)
+sudo iptables -A INPUT -p tcp --dport 22 -j DROP  # SSH (22)
+
+Probar bloqueo:
+Desde otra máquina en la red:
+
+nmap -p 21,22,80 <IP-de-tu-Kali>  # Los puertos aparecerán como "filtered"
+
+3. Permitir puertos nuevamente con iptables
+Eliminar reglas de bloqueo:
+
+sudo iptables -D INPUT -p tcp --dport 80 -j DROP  # Elimina regla HTTP
+sudo iptables -D INPUT -p tcp --dport 21 -j DROP  # Elimina regla FTP
+sudo iptables -D INPUT -p tcp --dport 22 -j DROP  # Elimina regla SSH
+
+# O borrar todas las reglas (alternativa rápida):
+sudo iptables -F  # Elimina todas las reglas
+
+4. Bloquear puertos con UFW (Debian/Kali)
+Habilitar UFW y bloquear puertos:
+
+sudo ufw enable                   # Activa el firewall
+sudo ufw deny 80/tcp              # HTTP
+sudo ufw deny 21/tcp              # FTP
+sudo ufw deny 22/tcp              # SSH
+
+sudo ufw status numbered
+
+Probar bloqueo:
+ssh usuario@<IP-de-tu-Kali>       # Error: "Connection timed out"
+curl http://<IP-de-tu-Kali>      # Error: No se recibe respuesta
+
+5. Permitir puertos nuevamente con UFW
+Habilitar tráfico:
+
+sudo ufw allow 80/tcp  # HTTP
+sudo ufw allow 21/tcp  # FTP
+sudo ufw allow 22/tcp  # SSH
