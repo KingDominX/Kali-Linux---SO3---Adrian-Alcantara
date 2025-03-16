@@ -15,6 +15,16 @@ sudo iptables -A INPUT -p tcp --dport 80 -j DROP  # HTTP (80)
 sudo iptables -A INPUT -p tcp --dport 21 -j DROP  # FTP (21)
 sudo iptables -A INPUT -p tcp --dport 22 -j DROP  # SSH (22)
 
+2.1 Guardar reglas para persistencia (Kali/Debian):
+Instala iptables-persistent para guardar las reglas:
+
+sudo apt install iptables-persistent -y
+sudo netfilter-persistent save  # Guarda las reglas actuales
+sudo netfilter-persistent reload  # Recarga las reglas guardadas
+
+Verificar reglas
+sudo iptables -L -n -v
+
 Probar bloqueo:
 Desde otra máquina en la red:
 
