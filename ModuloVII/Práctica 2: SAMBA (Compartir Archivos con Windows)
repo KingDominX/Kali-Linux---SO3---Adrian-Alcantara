@@ -1,0 +1,35 @@
+En el Servidor (ip de server):
+
+# 1. Instalar SAMBA y crear recursos
+sudo apt update && sudo apt install -y samba
+sudo mkdir -p /srv/samba/shared
+sudo groupadd smbgroup
+sudo useradd -M -s /sbin/nologin adrian && sudo usermod -aG smbgroup adrian
+sudo smbpasswd -a adrian  # Establecer contraseña
+
+# 2. Configurar permisos y SAMBA
+sudo chmod -R 770 /srv/samba/shared
+sudo chown -R adrian:smbgroup /srv/samba/shared
+sudo nano /etc/samba/smb.conf  # Agregar:
+[Shared]
+   path = /srv/samba/shared
+   browseable = yes
+   writable = yes
+   valid users = @smbgroup
+   create mask = 0770
+   directory mask = 0770
+
+sudo systemctl restart smbd
+sudo ufw allow samba && sudo ufw reload
+
+# 3. Crear archivos
+cd /srv/samba/shared && sudo touch adrian{1..100}.txt
+En Windows:
+Explorador de Archivos → Conectar unidad de red:
+
+Ruta: \\ip de server\Shared
+
+Usuario: adrian, Contraseña: [Tu contraseña SAMBA].
+
+Editar adrian99.txt → Guardar con "el zumzum de la carabela".
+
