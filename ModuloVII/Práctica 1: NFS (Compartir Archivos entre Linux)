@@ -1,0 +1,23 @@
+En el Servidor (192.168.100.11):
+
+# 1. Instalar NFS y crear archivos
+sudo apt update && sudo apt install -y nfs-kernel-server
+sudo mkdir -p /srv/nfs/OS3
+cd /srv/nfs/OS3 && sudo touch Adrian{1..100}.txt
+
+# 2. Permisos y exportación
+sudo chmod -R 777 /srv/nfs/OS3
+sudo chown -R nobody:nogroup /srv/nfs/OS3
+sudo nano /etc/exports  # Agregar: /srv/nfs/OS3 192.168.100.0/24(rw,sync,no_subtree_check)
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+En el Cliente (10.0.0.233):
+
+# 1. Instalar cliente y montar
+sudo apt update && sudo apt install -y nfs-common
+sudo mkdir -p /mnt/nfs_OS3
+sudo mount 192.168.100.11:/srv/nfs/OS3 /mnt/nfs_OS3
+
+# 2. Montaje automático
+sudo nano /etc/fstab  # Agregar: 192.168.100.11:/srv/nfs/OS3 /mnt/nfs_OS3 nfs defaults,_netdev 0 0
+sudo mount -a
