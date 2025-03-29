@@ -1,0 +1,9 @@
+# 1. Descargar y ejecutar Portainer
+docker run -d --name portainer -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+# 2. Acceder a la interfaz web
+# Abre http://127.0.0.1:9000 en tu navegador.
+
+# 3. Detener el contenedor de NGINX desde Portainer
+# - En la interfaz: Containers > my-nginx > Stop
+# Verifica que http://127.0.0.1:8888 ya no funcione.
