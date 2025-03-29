@@ -1,0 +1,28 @@
+# 1. Instalar Docker
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io -y
+sudo usermod -aG docker $USER
+newgrp docker
+
+# 2. Crear directorio y página HTML
+mkdir -p /home/website
+echo '<!DOCTYPE html>
+<html>
+<head>
+  <title>Práctica Docker</title>
+</head>
+<body>
+  <h1>Nombre: [Tu Nombre]</h1>
+  <p>Matrícula: [Tu Matrícula]</p>
+</body>
+</html>' > /home/website/index.html
+
+# 3. Ejecutar contenedor de NGINX
+docker run -d --name my-nginx -p 8888:80 -v /home/website:/usr/share/nginx/html nginx:latest
+
+# 4. Verificar en el navegador
+curl http://127.0.0.1:8888
