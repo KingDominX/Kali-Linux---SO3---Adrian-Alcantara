@@ -1,0 +1,38 @@
+Práctica 3: Instalación de Ansible y Configuración de Nodos
+Objetivo: Configurar Ansible para administrar nodos Linux y Windows.
+
+1. Instalar Ansible
+sudo apt-get update
+sudo apt-get install ansible -y
+
+2. Configurar Nodo Linux (DigitalOcean)
+# En el nodo Linux:
+sudo adduser ansible
+sudo usermod -aG sudo ansible
+
+# Copiar clave SSH desde el controlador
+ssh-copy-id ansible@<IP-DO-VM>
+
+3. Configurar Nodo Windows
+En PowerShell (como Admin): 
+# Configurar WinRM
+Set-ExecutionPolicy RemoteSigned -Force
+Enable-PSRemoting -Force
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+winrm set winrm/config/service/auth '@{Basic="true"}'
+
+# Crear usuario ansible
+$Password = ConvertTo-SecureString "1234" -AsPlainText -Force
+New-LocalUser -Name "ansible" -Password $Password -Description "Ansible User"
+Add-LocalGroupMember -Group "Administradores" -Member "ansible"
+
+4. Inventario de Ansible (/etc/ansible/hosts)
+[linux]
+ansible1 ansible_host=<IP-DO-VM> ansible_user=ansible
+
+[win]
+ansible2 ansible_host=<IP-Windows> ansible_user=ansible ansible_password=1234 ansible_connection=winrm ansible_winrm_transport=basic ansible_winrm_server_cert_validation=ignore
+
+5. Probar Conexión
+ansible linux -m ping  # Debe devolver "ping": "pong"
+ansible win -m win_ping  # Debe devolver "ping": "pong"
