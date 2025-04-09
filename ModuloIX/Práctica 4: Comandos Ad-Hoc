@@ -1,0 +1,8 @@
+Práctica 4: Comandos Ad-Hoc
+Objetivo: Ejecutar tareas puntuales en nodos.
+
+1. Copiar archivo a Windows
+ansible win -m win_copy -a "src='/home/domingo/archivo.txt' dest='C:\\Users\\ansible\\Documents\\archivo.txt'"
+
+2. Reiniciar nodo Linux
+ansible linux -m reboot --become --ask-become-pass
