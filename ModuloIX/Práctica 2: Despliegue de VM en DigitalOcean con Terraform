@@ -1,0 +1,70 @@
+1. Instalación de Terraform en la VM-Server (Controlador Ansible)
+# Descargar Terraform
+wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+
+# Descomprimir y mover al directorio de binarios
+unzip terraform_1.5.7_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+
+# Verificar instalación
+terraform version
+
+2. Configuración de Terraform para DigitalOcean
+Archivos necesarios:
+
+provider.tf (Configuración del proveedor):
+
+terraform {
+  required_providers {
+    digitalocean = {
+      source = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+  }
+}
+
+variable "do_token" {
+  description = "Token de API de DigitalOcean"
+  sensitive = true
+}
+
+variable "ssh_key" {
+  description = "Contenido de la clave pública SSH"
+  sensitive = true
+}
+
+provider "digitalocean" {
+  token = var.do_token
+}
+
+droplet.tf (Definición del Droplet):
+
+resource "digitalocean_droplet" "OS3vm" {
+  image = "ubuntu-22-04-x64"
+  name = "OS3vm"
+  region = "nyc1"
+  size = "s-1vcpu-1gb"
+  ssh_keys = [digitalocean_ssh_key.ansible_key.fingerprint]
+}
+
+output "droplet_ip" {
+  value = digitalocean_droplet.OS3vm.ipv4_address
+}
+
+terraform.tfvars (Variables sensibles):
+do_token = "dop_v1_tu_token_secreto"  # Reemplaza con tu token de DigitalOcean
+ssh_key = "ssh-rsa AAAAB3NzaC1..."    # Contenido de tu clave pública (~/.ssh/id_rsa.pub)
+
+3. Ejecución de Terraform
+# Inicializar Terraform
+terraform init
+# Verificar el plan de ejecución
+terraform plan
+# Aplicar los cambios (crear la VM)
+terraform apply -auto-approve
+# Obtener la IP pública de la VM
+terraform output droplet_ip
+
+4. Validación
+SSH:
+ssh root@$(ip del drople)
