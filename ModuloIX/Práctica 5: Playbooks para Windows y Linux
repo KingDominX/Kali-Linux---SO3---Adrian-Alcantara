@@ -1,0 +1,45 @@
+Práctica 5: Playbooks para Windows y Linux
+1. Playbook para instalar Notepad++ en Windows (install_notepad.yml)
+Requisito previo: Chocolatey debe estar instalado en Windows.
+
+Playbook completo:
+
+---
+- name: Instalar Notepad++ en Windows
+  hosts: win
+  tasks:
+    - name: Instalar Chocolatey (si no está instalado)
+      win_shell: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      when: not ansible_facts.packages.chocolatey
+
+    - name: Instalar Notepad++
+      win_chocolatey:
+        name: notepadplusplus
+        state: present
+
+Ejecución:
+ansible-playbook install_notepad.yml
+
+Verificación en Windows:
+powershell
+choco list --local-only | findstr "notepadplusplus"
+
+2. Playbook para actualizar repositorios en Linux (update_repos.yml)
+
+---
+- name: Actualizar repositorios en Linux
+  hosts: linux
+  become: yes  # Ejecutar con sudo
+  tasks:
+    - name: Actualizar repositorios apt
+      apt:
+        update_cache: yes  # Equivalente a "apt update"
+
+Ejecución:
+ansible-playbook update_repos.yml --ask-become-pass 
+
+Verificación en Linux:
+sudo apt update && sudo apt list --upgradable
