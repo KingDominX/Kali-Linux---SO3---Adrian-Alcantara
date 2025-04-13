@@ -28,3 +28,91 @@ crontab -e
 
 Agregar al Crontab
 */1 * * * * /usr/local/bin/sync_script.sh
+
+Posibles errores:
+1. Error en creación de carpeta o archivos
+mkdir: no se puede crear el directorio «Sync»: Permiso denegado
+Causa: Falta de permisos en el directorio home.
+
+Solución:
+chmod 755 ~  # Dar permisos al directorio home del usuario
+mkdir ~/Sync
+
+2. Fallo al copiar clave SSH al secundario
+ssh: connect to host 10.0.0.233 port 22: Connection refused
+
+Causas:
+Firewall bloqueando el puerto 22.
+Servidor secundario no tiene SSH habilitado.
+
+Soluciones:
+# Verificar conexión SSH
+ssh -v domingo@10.0.0.233
+
+# Si el puerto SSH no es el 22, especificarlo en ssh-copy-id
+ssh-copy-id -i ~/.ssh/id_rsa.pub -p 2222 domingo@10.0.0.233
+
+3. Rsync falla en sincronización manual
+rsync: connection unexpectedly closed (0 bytes received so far) [sender]
+Causas:
+
+Ruta incorrecta en el destino.
+
+Permisos denegados en el directorio ~/Sync del secundario.
+
+Solución:
+# Verificar existencia de la carpeta en el secundario
+ssh domingo@10.0.0.233 "ls ~/Sync"
+
+# Asegurar permisos en el secundario
+ssh domingo@10.0.0.233 "chmod -R 755 ~/Sync"
+
+4. Error en el script de sincronización
+Error 1:
+/usr/local/bin/sync_gustavo.sh: Permiso denegado
+
+Solución:
+# Corregir nombre del script y dar permisos
+sudo chmod +x /usr/local/bin/sync_gustavo.sh  # El nombre correcto es sync_gustavo.sh, no sync_script.sh
+
+Error 2:
+rsync: change_dir "/home/usuario/sync_folder" failed: No existe el archivo o el directorio
+Causa: Ruta incorrecta en el script (sync_folder vs Sync).
+
+Solución: Editar el script para usar la ruta correcta:
+rsync -avz --delete -e ssh /home/domingo/Sync/ domingo@10.0.0.233:/home/domingo/Sync/
+
+5. Fallo en Cron
+Error: El script no se ejecuta automáticamente.
+
+Causas:
+Ruta incorrecta en el crontab.
+Variables de entorno faltantes en Cron.
+
+Solución:
+# Especificar la shell y rutas completas en el script:
+#!/bin/bash
+/usr/bin/rsync -avz --delete -e /usr/bin/ssh /home/domingo/Sync/ domingo@10.0.0.233:/home/domingo/Sync/
+
+6. Error de registro en el log
+Error:
+/var/log/sync.log: Permiso denegado
+Causa: El usuario no tiene permisos para escribir en /var/log.
+
+Solución:
+# Crear el archivo de log con permisos
+sudo touch /var/log/sync.log
+sudo chown domingo:domingo /var/log/sync.log
+
+7. Eliminación accidental de archivos
+Riesgo: La opción --delete en rsync borrará archivos en el secundario si no existen en el primario.
+
+Prevención: Usar --dry-run para simular antes de ejecutar:
+
+rsync -avzn --delete -e ssh ~/Sync/ domingo@10.0.0.233:~/Sync/
+
+Recomendaciones finales:
+Verifica las rutas absolutas en el script y cron.
+Prueba el script manualmente antes de confiar en Cron.
+Usa tail -f /var/log/sync.log para monitorear ejecuciones automáticas.
+Considera usar rsync-daemon para sincronizaciones más complejas.
