@@ -1,0 +1,143 @@
+1. Configuración del Servidor Samba en Kali Linux
+1.1 Configurar IP Estática y Hostname
+
+# Establecer IP estática
+sudo nano /etc/network/interfaces  
+# Agregar:
+auto eth0  
+iface eth0 inet static  
+    address 10.0.0.232  
+    netmask 255.255.255.0  
+    gateway 10.0.0.1  
+
+# Configurar hostname  
+sudo hostnamectl set-hostname dc.os3.inet  
+echo "10.0.0.232 dc.os3.inet" | sudo tee -a /etc/hosts  
+
+1.2 Instalar Samba y Dependencias
+sudo apt update && sudo apt upgrade -y  
+sudo apt install -y samba samba-dsdb-modules krb5-user krb5-config winbind dnsutils  
+
+1.3 Configurar Kerberos
+sudo nano /etc/krb5.conf  
+
+# Reemplazar con:
+[libdefaults]  
+    default_realm = OS3.INET  
+    dns_lookup_realm = false  
+    dns_lookup_kdc = true  
+
+[realms]  
+    OS3.INET = {  
+        kdc = dc.os3.inet  
+        admin_server = dc.os3.inet  
+    }  
+
+[domain_realm]  
+    .os3.inet = OS3.INET  
+    os3.inet = OS3.INET
+
+1.4 Aprovisionar el Dominio
+sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bak  # Si existe  
+sudo samba-tool domain provision --use-rfc2307 --interactive  
+
+# Valores a ingresar:  
+Realm: OS3.INET  
+Domain: OS3  
+Server Role: dc  
+DNS backend: SAMBA_INTERNAL  
+DNS forwarder IP: 8.8.8.8  
+Administrator password: Teletubies123  
+
+1.5 Habilitar Servicios
+sudo systemctl unmask samba-ad-dc  
+sudo systemctl enable samba-ad-dc  
+sudo systemctl restart samba-ad-dc  
+
+1.6 Crear Carpeta Compartida
+sudo mkdir /srv/compartida  
+sudo chmod 777 /srv/compartida  # Permisos temporales  
+
+# Editar Samba:
+sudo nano /etc/samba/smb.conf  
+
+# Agregar al final:
+[compartida]  
+    path = /srv/compartida  
+    read only = No  
+    valid users = @"Domain Users"  
+
+# Reiniciar servicio  
+sudo systemctl restart samba-ad-dc  
+2. Unir Windows al Dominio
+2.1 Configurar DNS en Windows
+Ir a Panel de Control > Redes e Internet > Centro de redes y recursos compartidos > Cambiar configuración del adaptador.
+
+Hacer clic derecho en la tarjeta de red > Propiedades > IPv4 > Propiedades.
+
+Establecer DNS primario: 10.0.0.232 (IP de Kali).
+
+2.2 Unir al Dominio
+Presionar Win + R, escribir sysdm.cpl.
+
+Ir a la pestaña "Nombre del equipo" > "Cambiar".
+
+Seleccionar "Dominio" y escribir: os3.inet.
+
+Ingresar credenciales:
+
+Usuario: Administrator
+
+Contraseña: Teletubies123
+
+2.3 Verificar Conexión al Dominio
+cmd
+nslookup dc.os3.inet  # Debe mostrar 10.0.0.232  
+gpupdate /force  
+3. Mapear Carpeta Compartida en Windows
+3.1 Conectar como Unidad de Red
+Abrir Explorador de Archivos.
+
+En la barra de direcciones escribir: \\10.0.0.232\compartida.
+
+Ingresar credenciales:
+
+Usuario: OS3\Administrator
+
+Contraseña: Teletubies123
+
+3.2 Mapear Unidad Permanentemente
+Clic derecho en "Este equipo" > "Conectar unidad de red".
+
+Seleccionar letra (ej: Z:) y ruta: \\10.0.0.232\compartida.
+
+Marcar "Volver a conectar al iniciar sesión".
+
+Comando CMD:
+
+cmd
+net use Z: \\10.0.0.232\compartida /USER:OS3\Administrator Teletubies123 /PERSISTENT:YES  
+
+4. Solución de Problemas
+Error: "Nombre o servicio no conocido"
+Verificar /etc/hosts en Kali y DNS en Windows.
+
+Error de Autenticación
+Resetear contraseña de Administrator en Kali:
+
+sudo samba-tool user setpassword Administrator  
+Hora Desincronizada
+
+# En Kali (servidor NTP):  
+sudo apt install chrony  
+sudo systemctl restart chronyd  
+
+# En Windows:  
+w32tm /config /syncfromflags:manual /manualpeerlist:10.0.0.232  
+w32tm /resync  
+5. Verificación Final
+En Windows, crear un archivo en Z:\.
+
+En Kali, verificar que el archivo existe:
+
+ls /srv/compartida  
