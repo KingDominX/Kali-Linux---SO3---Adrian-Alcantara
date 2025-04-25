@@ -141,3 +141,34 @@ En Windows, crear un archivo en Z:\.
 En Kali, verificar que el archivo existe:
 
 ls /srv/compartida  
+
+1. Verificar la Contraseña Actual en Samba
+Desde Kali Linux, comprueba la contraseña del usuario Administrator:
+
+bash
+sudo samba-tool user getpassword Administrator
+Si no coincide con la que estás usando en Windows, continúa al paso 2.
+
+2. Restablecer la Contraseña del Administrador
+bash
+sudo samba-tool user setpassword Administrator
+Ingresa la nueva contraseña (ej: Teletubies123).
+
+Confírmala.
+
+3. Verificar el Usuario en el Dominio
+Asegúrate de que el usuario Administrator existe:
+
+bash
+sudo samba-tool user list
+Debe aparecer en la lista.
+
+4. Sincronización de Tiempo
+En Kali (servidor NTP):
+bash
+sudo apt install chrony
+sudo systemctl restart chronyd
+En Windows:
+cmd
+w32tm /config /syncfromflags:manual /manualpeerlist:10.0.0.232
+w32tm /resync
