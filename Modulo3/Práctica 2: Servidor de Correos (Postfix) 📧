@@ -1,5 +1,6 @@
 # 1. Instalar Postfix y herramientas
 sudo apt install postfix mailutils -y  # Seleccionar "Internet Site"
+sudo dpkg-reconfigure postfix
 
 # 2. Configurar Postfix para Gmail
 sudo nano /etc/postfix/main.cf  # Añadir:
@@ -28,3 +29,5 @@ sudo chown root:root /etc/postfix/sasl_passwd*
 
 3. Firewall bloqueando el puerto 587:
 sudo ufw allow out 587/tcp  # Permitir tráfico saliente
+
+Sudo postqueue -P
