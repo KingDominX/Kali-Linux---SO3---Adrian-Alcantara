@@ -1,0 +1,28 @@
+Pasos para resetear la contraseña de un usuario en Debian:
+
+Reinicia el sistema.
+En la ventana del GRUB, presiona la tecla e para editar las opciones de arranque.
+Busca la línea que comienza con linux /boot/vmlinuz- y añade init=/bin/bash al final de esa línea. Asegúrate de dejar un espacio entre la última palabra de la línea original y init=/bin/bash.
+Presiona F10 para arrancar el sistema con las opciones modificadas. Esto te llevará a una línea de comandos como usuario root.
+Ejecuta el siguiente comando para montar el sistema de archivos en modo lectura/escritura:
+Bash
+
+mount -o remount,rw /
+Edita el archivo de contraseñas shadow con el editor vi:
+Bash
+
+vi /etc/shadow
+Dentro del archivo, busca la línea correspondiente al usuario cuya contraseña quieres resetear (en el ejemplo, el usuario debian).
+Borra todos los caracteres que se encuentren entre los dos puntos (:) en la segunda columna de esa línea. Esta columna contiene el hash de la contraseña. Después de borrarla, la línea debería verse así (con el nombre de usuario correcto):
+debian::18856:0:99999:7:::
+Guarda los cambios y cierra el archivo en vi. Para guardar y salir, presiona Esc, luego escribe :wq y presiona Enter.
+Ejecuta el comando passwd seguido del nombre del usuario para establecer una nueva contraseña:
+Bash
+
+passwd debian
+Se te pedirá que introduzcas la nueva contraseña y que la confirmes.
+Una vez que hayas cambiado la contraseña, reinicia el sistema:
+Bash
+
+reboot
+Ahora deberías poder iniciar sesión con el usuario cuya contraseña has reseteado utilizando la nueva contraseña que estableciste.
