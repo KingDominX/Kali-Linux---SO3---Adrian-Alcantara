@@ -47,7 +47,7 @@ Domain: OS3
 Server Role: dc  
 DNS backend: SAMBA_INTERNAL  
 DNS forwarder IP: 8.8.8.8  
-Administrator password: Teletubies123  
+Administrator password: Domingo  
 
 1.5 Habilitar Servicios
 sudo systemctl unmask samba-ad-dc  
@@ -88,7 +88,7 @@ Ingresar credenciales:
 
 Usuario: Administrator
 
-Contraseña: Teletubies123
+Contraseña: Domingo
 
 2.3 Verificar Conexión al Dominio
 cmd
