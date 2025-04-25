@@ -33,6 +33,10 @@ ansible1 ansible_host=<IP-DO-VM> ansible_user=ansible
 [win]
 ansible2 ansible_host=<IP-Windows> ansible_user=ansible ansible_password=1234 ansible_connection=winrm ansible_winrm_transport=basic ansible_winrm_server_cert_validation=ignore
 
+4.5 Otro metodo: Reemplaza [tu_droplet_ip] con la dirección IP pública de tu Droplet:
+[digitalocean]
+[tu_droplet_ip] ansible_user=root ansible_ssh_private_key=~/.ssh/id_rsa # Ajusta la ruta a tu clave privada si es diferente
+
 5. Probar Conexión
 ansible linux -m ping  # Debe devolver "ping": "pong"
 ansible win -m win_ping  # Debe devolver "ping": "pong"
