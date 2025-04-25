@@ -1,0 +1,195 @@
+Práctica 1: Configuración del menú de Grub y recuperación de contraseña de root
+1. Configurar el tiempo de espera del menú de Grub a 20 segundos:
+
+Para modificar el tiempo de espera del menú de Grub, debes editar el archivo de configuración de Grub. Aquí te muestro los pasos:
+
+Abre una terminal: Puedes hacerlo buscando "Terminal" en el menú de aplicaciones o presionando Ctrl + Alt + T.
+Edita el archivo de configuración de Grub: Utiliza un editor de texto con privilegios de superusuario (root) para abrir el archivo de configuración de Grub. Un editor común es nano:
+Bash
+
+sudo nano /etc/default/grub
+Busca la línea GRUB_TIMEOUT: Localiza la línea que define el tiempo de espera del menú de Grub. Por defecto, suele estar configurada en 5 o 10 segundos.
+Modifica el valor: Cambia el valor de GRUB_TIMEOUT a 20:
+GRUB_TIMEOUT=20
+Guarda los cambios y cierra el archivo: Si estás usando nano, presiona Ctrl + O para guardar, luego Enter para confirmar el nombre del archivo, y finalmente Ctrl + X para salir.
+Actualiza la configuración de Grub: Aplica los cambios ejecutando el siguiente comando:
+Bash
+
+sudo update-grub
+Este comando regenerará el archivo de configuración de Grub basado en los cambios que realizaste.
+Resultado: Después de reiniciar tu sistema, el menú de Grub se mostrará durante 20 segundos antes de iniciar el sistema operativo por defecto.
+
+2. Método de recuperación de contraseña de root olvidada:
+
+Si olvidas la contraseña del usuario root en Debian, puedes recuperarla siguiendo estos pasos:
+
+Reinicia el sistema.
+En la ventana del GRUB, presiona la tecla e para editar las opciones de arranque.
+Busca la línea que comienza con linux /boot/vmlinuz- y añade rw init=/bin/bash al final de esa línea. Asegúrate de dejar un espacio entre la última palabra de la línea original y rw init=/bin/bash.
+Presiona Ctrl + X o F10 para arrancar el sistema con las opciones modificadas. Esto te llevará directamente a una línea de comandos como usuario root.
+Ejecuta el siguiente comando para cambiar la contraseña del usuario root:
+Bash
+
+passwd root
+Se te pedirá que introduzcas la nueva contraseña y que la confirmes.
+Una vez que hayas establecido la nueva contraseña, reinicia el sistema:
+Bash
+
+reboot
+Ahora podrás iniciar sesión como usuario root utilizando la nueva contraseña.
+Práctica 2: Creación de scripts de backup y de copia de ifconfig
+1. Script de backup con TAR:
+
+Crea un archivo llamado backup_home.sh con el siguiente contenido:
+
+Bash
+
+#!/bin/bash
+
+USUARIO="$USER"
+FECHA_HORA=$(date "+%d-%m-%Y:%H:%M")
+NOMBRE_ARCHIVO="backup_${USUARIO}_${FECHA_HORA}.tar.gz"
+RUTA_BACKUP="/tmp" # Puedes cambiar la ruta de destino si lo deseas
+
+echo "Creando backup de /home/${USUARIO}..."
+tar -czvf "${RUTA_BACKUP}/${NOMBRE_ARCHIVO}" "/home/${USUARIO}"
+
+if [ $? -eq 0 ]; then
+  echo "Backup creado exitosamente en ${RUTA_BACKUP}/${NOMBRE_ARCHIVO}"
+else
+  echo "Error al crear el backup."
+fi
+Explicación del script:
+
+#!/bin/bash: Indica que el script se ejecutará con Bash.
+USUARIO="$USER": Obtiene el nombre del usuario actual.
+FECHA_HORA=$(date "+%d-%m-%Y:%H:%M"): Obtiene la fecha y hora actual en el formato especificado.
+NOMBRE_ARCHIVO="...": Define el nombre del archivo TAR con la fecha y hora.
+RUTA_BACKUP="/tmp": Define la ruta donde se guardará el backup (puedes cambiarla).
+tar -czvf ...: Comando tar para crear un archivo comprimido:
+-c: Crear un archivo.
+-z: Comprimir con gzip.
+-v: Mostrar los archivos procesados (opcional).
+-f: Especificar el nombre del archivo.
+if [ $? -eq 0 ]: Verifica si el comando anterior se ejecutó sin errores ($? es el código de salida).
+Para ejecutar el script, guárdalo, otórgale permisos de ejecución y luego ejecútalo:
+
+Bash
+
+chmod +x backup_home.sh
+./backup_home.sh
+2. Script de copia de ifconfig al escritorio:
+
+Crea un archivo llamado copiar_ifconfig.sh con el siguiente contenido:
+
+Bash
+
+#!/bin/bash
+
+read -p "Ingrese el nombre del archivo para guardar la información de ifconfig: " NOMBRE_ARCHIVO
+
+ifconfig > "/home/$USER/Escritorio/$NOMBRE_ARCHIVO"
+
+if [ $? -eq 0 ]; then
+  echo "La información de ifconfig se ha guardado en /home/$USER/Escritorio/$NOMBRE_ARCHIVO"
+else
+  echo "Error al copiar la información de ifconfig."
+fi
+Explicación del script:
+
+#!/bin/bash: Indica que el script se ejecutará con Bash.
+read -p ... NOMBRE_ARCHIVO: Muestra un mensaje y lee la entrada del usuario, guardándola en la variable NOMBRE_ARCHIVO.
+ifconfig > ...: Ejecuta el comando ifconfig y redirige su salida a un archivo en el escritorio del usuario actual con el nombre proporcionado.
+if [ $? -eq 0 ]: Verifica si el comando anterior se ejecutó sin errores.
+Para ejecutar el script, guárdalo, otórgale permisos de ejecución y luego ejecútalo:
+
+Bash
+
+chmod +x copiar_ifconfig.sh
+./copiar_ifconfig.sh
+El script te pedirá que ingreses el nombre del archivo y luego guardará la salida de ifconfig en un archivo con ese nombre en tu escritorio.
+
+Práctica 3: Configuración de red en modo Bridge y SSH con clave pública
+1. Configurar VM en modo Bridge y validar ping desde Windows:
+
+Los pasos exactos para configurar tu máquina virtual en modo Bridge dependen del software de virtualización que estés utilizando (VirtualBox, VMware, etc.). Aquí te doy una guía general para VirtualBox, que es común:
+
+Apaga tu máquina virtual.
+Abre la configuración de la máquina virtual.
+Ve a la sección de "Red" o "Adaptador de red".
+Selecciona el "Adaptador 1" (u otro adaptador que estés utilizando para la conexión).
+Cambia la opción de "Conectado a:" a "Adaptador puente".
+En la opción de "Nombre:", selecciona la tarjeta de red física de tu máquina host Windows que está conectada a la red.
+Guarda los cambios y arranca tu máquina virtual.
+Una vez que la VM esté en modo Bridge, debería obtener una dirección IP de tu red local, al igual que tu máquina host Windows. Para validar la conexión desde tu máquina host Windows:
+
+Abre el "Símbolo del sistema" o "PowerShell" en Windows.
+Utiliza el comando ping seguido de la dirección IP de tu máquina virtual:
+ping <dirección_ip_de_la_vm>
+Si la configuración es correcta, deberías recibir respuestas del ping desde la dirección IP de tu VM.
+2. Habilitar SSH y probar conexión desde Windows con usuario y contraseña:
+
+El servicio SSH suele estar instalado y habilitado por defecto en muchas distribuciones de Linux. Si no lo está, puedes instalarlo y habilitarlo con los siguientes comandos en tu VM Debian:
+
+Abre una terminal en tu VM.
+Instala el servidor SSH (si no está instalado):
+Bash
+
+sudo apt update
+sudo apt install openssh-server
+Habilita y/o inicia el servicio SSH:
+Bash
+
+sudo systemctl enable ssh
+sudo systemctl start ssh
+Verifica el estado del servicio SSH:
+Bash
+
+sudo systemctl status ssh
+Deberías ver que el servicio está activo (running).
+Para conectarte desde tu máquina host Windows:
+
+Abre un cliente SSH en Windows. Windows 10 y 11 tienen un cliente SSH integrado que puedes usar desde el "Símbolo del sistema" o "PowerShell". También puedes usar clientes como PuTTY.
+Utiliza el siguiente comando (reemplaza <dirección_ip_de_la_vm> con la dirección IP de tu VM y <usuario_vm> con tu nombre de usuario en la VM):
+Bash
+
+ssh <usuario_vm>@<dirección_ip_de_la_vm>
+Se te pedirá la contraseña de tu usuario en la VM. Ingresa la contraseña y si es correcta, accederás a la línea de comandos de tu VM.
+3. Generar par de llaves SSH en Windows:
+
+Puedes generar un par de llaves SSH en Windows utilizando la herramienta ssh-keygen desde PowerShell o el Símbolo del sistema (si tienes instalado el cliente OpenSSH, que suele estar por defecto en versiones recientes de Windows 10 y 11).
+
+Abre PowerShell o el Símbolo del sistema.
+Ejecuta el siguiente comando para generar un par de llaves RSA (puedes elegir otros tipos como EdDSA con -t ed25519):
+Bash
+
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+-t rsa: Especifica el tipo de llave (RSA).
+-b 4096: Especifica el número de bits para la llave (4096 es un valor seguro).
+-f ~/.ssh/id_rsa: Especifica la ruta y el nombre del archivo para guardar la llave privada. ~/.ssh/ suele ser C:\Users\<TuUsuarioWindows>\.ssh\ en Windows.
+-N "": Establece una frase de contraseña vacía (sin contraseña). Si prefieres más seguridad, puedes establecer una frase de contraseña, pero tendrás que ingresarla cada vez que uses la llave privada.
+Esto generará dos archivos en la ubicación especificada: id_rsa (la llave privada) y id_rsa.pub (la llave pública).
+
+4. Copiar la llave pública al servidor:
+
+Hay varias formas de copiar la llave pública al servidor Linux. Una forma sencilla si ya tienes acceso SSH con contraseña es usar el comando ssh-copy-id:
+
+Abre PowerShell o el Símbolo del sistema en Windows.
+Ejecuta el siguiente comando (reemplaza <usuario_vm> con tu nombre de usuario en la VM y <dirección_ip_de_la_vm> con la dirección IP de tu VM):
+Bash
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub <usuario_vm>@<dirección_ip_de_la_vm>
+Se te pedirá la contraseña de tu usuario en la VM. Ingresa la contraseña. El comando copiará el contenido de tu llave pública (id_rsa.pub) al archivo ~/.ssh/authorized_keys en el directorio personal de tu usuario en la VM.
+Si no tienes acceso SSH con contraseña, puedes copiar manualmente el contenido de id_rsa.pub al archivo ~/.ssh/authorized_keys en tu VM. Esto implicaría iniciar sesión en la consola de la VM de alguna otra manera (por ejemplo, a través de la interfaz del software de virtualización).
+
+5. Probar conexión SSH sin contraseña desde Windows:
+
+Después de copiar la llave pública al servidor, intenta conectarte de nuevo desde Windows usando SSH:
+
+Abre PowerShell o el Símbolo del sistema en Windows.
+Ejecuta el mismo comando SSH que usaste antes:
+Bash
+
+ssh <usuario_vm>@<dirección_ip_de_la_vm>
+Si la configuración de las llaves SSH fue exitosa, deberías acceder a la línea de comandos de tu VM automáticamente, sin que se te solicite la contraseña.
+
