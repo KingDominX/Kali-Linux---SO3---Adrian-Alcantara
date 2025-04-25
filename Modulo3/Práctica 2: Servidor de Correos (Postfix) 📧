@@ -18,3 +18,13 @@ sudo systemctl restart postfix
 
 # 5. Probar envío
 echo "Cuerpo del mensaje" | mail -s "Asunto" os3conadrian@gmail.com
+
+Solución de Problemas Comunes
+1. Error de autenticación:
+sudo tail /var/log/mail.log  # Ver logs de Postfix
+
+2. Permisos incorrectos:
+sudo chown root:root /etc/postfix/sasl_passwd*
+
+3. Firewall bloqueando el puerto 587:
+sudo ufw allow out 587/tcp  # Permitir tráfico saliente
