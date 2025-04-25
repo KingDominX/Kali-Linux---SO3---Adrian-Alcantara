@@ -1,32 +1,64 @@
-# 1. Instalar CUPS y PDF Virtual
-sudo apt install cups cups-pdf -y
-sudo usermod -aG lpadmin $USER
-apt install ufw -y 
+1. Instalar dependencias necesarias
+sudo apt install cups cups-pdf -y         # Servidor de impresión y PDF virtual
+sudo usermod -aG lpadmin $USER           # Permite administrar impresoras
+sudo apt install ufw -y                  # Firewall (opcional pero recomendado)
 
-systemctl start cups
-ufw enable
-ufw allow 631/tcp
+2. Configurar el firewall (si usas UFW)
+sudo ufw enable
+sudo ufw allow 631/tcp                   # Permite tráfico CUPS
 
-# 2. Configurar acceso remoto
-Para habilitar la administración remota, 
-sudo cupsctl --remote-any
-sudo cupsctl --remote-admin
-sudo cupsctl --share-printers
+3. Habilitar administración remota (opcional)
+sudo cupsctl --remote-any                # Habilita acceso desde cualquier red
+sudo cupsctl --remote-admin              
+sudo systemctl restart cups              # Reinicia CUPS para aplicar cambios
 
+4. Agregar la impresora manualmente
+Método 1: Interfaz web de CUPS (recomendado)
+Accede desde tu navegador a:
+http://localhost:631 o http://[tu-ip]:631.
 
-# 3. Metodo secundario que no me funciono
-sudo nano /etc/cups/cupsd.conf  # Añadir:
-Listen 10.0.0.232:631
-<Location />
-  Allow @local
-  Allow 10.0.0.0/24
-</Location>
+Ve a Administration > Add Printer.
 
-# 4. Configurar impresora por CUPS
+Selecciona la conexión de tu impresora (USB, red, IPP, etc.).
 
-# 5. Reiniciar servicios
-sudo systemctl restart cups
+Proporciona el URI según el tipo de impresora:
 
-# 6. Probar impresión
-echo "Prueba" | lp -d PDF-Virtual
-ls /var/cups-pdf  # Verificar PDF generado
+USB: usb://[fabricante]/[modelo]
+
+Red (IP): socket://192.168.1.100 (reemplaza con la IP de tu impresora)
+
+LPD: lpd://[direccion-IP]/cola
+
+Instala los controladores adecuados (PPD) o selecciona uno genérico si no tienes.
+
+Método 2: Terminal (para impresoras de red)
+bash
+lpadmin -p NombreImpresora -v socket://192.168.1.100 -E -m everywhere
+5. Probar la impresión
+Impresora PDF Virtual (cups-pdf)
+bash
+echo "Prueba de impresión" | lp -d PDF
+Los archivos se guardan en:
+/var/spool/cups-pdf/[TU_USUARIO]/
+(Asegúrate de tener permisos o usa sudo ls).
+
+Impresora física
+bash
+lp -d NombreImpresora /ruta/archivo.txt
+Posibles errores y soluciones
+Permisos denegados en CUPS:
+
+Ejecuta sudo systemctl restart cups y verifica que tu usuario esté en el grupo lpadmin.
+
+No se detecta la impresora USB:
+
+Conecta la impresora y ejecuta lsusb para verificar si el sistema la reconoce.
+
+Problemas con cups-pdf:
+
+Verifica la configuración en /etc/cups/cups-pdf.conf (ruta de guardado).
+
+Firewall bloqueando conexiones:
+
+Si usas una impresora de red, asegúrate de abrir el puerto correspondiente (ej: 9100 para impresoras HP).
+
