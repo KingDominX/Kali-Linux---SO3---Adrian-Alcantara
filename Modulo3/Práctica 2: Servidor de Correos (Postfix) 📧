@@ -9,6 +9,12 @@ smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_use_tls = yes
 
+# Autenticación SASL
+smtp_sasl_security_options = noanonymous
+smtp_sasl_mechanism_filter = plain, login
+smtp_tls_security_level = encrypt
+
+
 # 3. Crear credenciales
 sudo nano /etc/postfix/sasl_passwd  # Contenido: [smtp.gmail.com]:587 tu_correo:contraseña
 sudo postmap /etc/postfix/sasl_passwd
