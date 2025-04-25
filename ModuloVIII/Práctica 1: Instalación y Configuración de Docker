@@ -1,36 +1,41 @@
-# 1. Instalar Docker
-sudo apt update
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update
-sudo apt install docker-ce docker-ce-cli containerd.io -y
-sudo usermod -aG docker $USER
+1. Instalar Docker en Kali Linux
+bash
+# Actualizar repositorios e instalar Docker
+sudo apt update && sudo apt install -y docker.io
+
+# Iniciar y habilitar el servicio
+sudo systemctl start docker
+sudo systemctl enable docker
+2. Verificar la instalación
+bash
+docker --version  # Deberías ver: Docker version 20.10.5+dfsg1
+3. Configurar usuario sin reiniciar
+bash
+# Crear grupo docker (si no existe)
+sudo groupadd docker
+
+# Agregar usuario al grupo
+sudo usermod -aG docker monegro
+
+# Aplicar cambios sin reiniciar
 newgrp docker
 
-Solución al error con Podman y nombres cortos de imágenes:
+4. Trabajar con NGINX
+bash
+# Descargar imagen oficial
+docker pull nginx
 
-1. Crear el archivo para silenciar mensajes de Docker:
-sudo touch /etc/containers/nodocker
+# Crear directorio persistente (con permisos)
+sudo mkdir -p /home/website
+sudo chmod 777 /home/website  # Permisos temporales para pruebas
 
-2. Configurar Podman para usar Docker Hub como registro por defecto:
-Edita el archivo de configuración de registros:
-
-sudo nano /etc/containers/registries.conf
-Agrega Docker Hub a unqualified-search-registries:
-
-ini
-[registries.search]
-registries = ["docker.io", "quay.io"]
-
-[registries.insecure]
-registries = []
-
-[registries.block]
-registries = []
-
-3. Ejecutar el comando de Podman usando el nombre completo de la imagen:
-podman run -d 
+5. Crear contenedor NGINX
+bash
+docker run -d \
+  --name mi_nginx \
+  -p 8888:80 \
+  -v "/home/website:/usr/share/nginx/html" \
+  nginx
 
 # 2. Crear directorio y página HTML
 mkdir -p /home/website
