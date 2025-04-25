@@ -8,6 +8,30 @@ sudo apt install docker-ce docker-ce-cli containerd.io -y
 sudo usermod -aG docker $USER
 newgrp docker
 
+Solución al error con Podman y nombres cortos de imágenes:
+
+1. Crear el archivo para silenciar mensajes de Docker:
+sudo touch /etc/containers/nodocker
+
+2. Configurar Podman para usar Docker Hub como registro por defecto:
+Edita el archivo de configuración de registros:
+
+sudo nano /etc/containers/registries.conf
+Agrega Docker Hub a unqualified-search-registries:
+
+ini
+[registries.search]
+registries = ["docker.io", "quay.io"]
+
+[registries.insecure]
+registries = []
+
+[registries.block]
+registries = []
+
+3. Ejecutar el comando de Podman usando el nombre completo de la imagen:
+podman run -d 
+
 # 2. Crear directorio y página HTML
 mkdir -p /home/website
 echo '<!DOCTYPE html>
