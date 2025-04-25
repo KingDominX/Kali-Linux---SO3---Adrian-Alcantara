@@ -51,6 +51,12 @@ output "droplet_ip" {
   value = digitalocean_droplet.OS3vm.ipv4_address
 }
 
+inbound_rule {
+    protocol         = "icmp"
+    port_range       = "any"
+    source_addresses = ["0.0.0.0/0"]
+  }
+
 terraform.tfvars (Variables sensibles):
 do_token = "dop_v1_tu_token_secreto"  # Reemplaza con tu token de DigitalOcean
 ssh_key = "ssh-rsa AAAAB3NzaC1..."    # Contenido de tu clave pública (~/.ssh/id_rsa.pub)
@@ -68,3 +74,5 @@ terraform output droplet_ip
 4. Validación
 SSH:
 ssh root@$(ip del drople)
+
+
